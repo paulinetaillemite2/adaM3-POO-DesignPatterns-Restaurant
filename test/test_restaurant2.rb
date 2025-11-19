@@ -3,7 +3,7 @@ require_relative '../lib/restaurant'
 #Création du restaurant avec sa cuisine et son menu
 cuisine = Cuisine.new
 
-#Création d'un menu via les factories
+#FACTORIES = Création d'un menu via les factories
 entree_factory = EntreeFactory.new
 plat_factory = PlatFactory.new
 dessert_factory = DessertFactory.new
@@ -23,9 +23,9 @@ dessert2 = dessert_factory.create_plat("Tarte aux fraises", 9)
 dessert3 = dessert_factory.create_plat("Tiramisu", 10)
 dessert4 = dessert_factory.create_plat("Café Gourmand", 8)
 
-menu_entrees = [entree1, entree2, entree3, entree4] # + entree5
-menu_plats = [plat1, plat2, plat3, plat4] # + plat5
-menu_desserts = [dessert1, dessert2, dessert3, dessert4] # + dessert5
+menu_entrees = [entree1, entree2, entree3, entree4]
+menu_plats = [plat1, plat2, plat3, plat4]
+menu_desserts = [dessert1, dessert2, dessert3, dessert4]
 
 
 puts "\n=== MENU DU RESTAURANT ==="
@@ -53,11 +53,10 @@ clients = [client1, client2, client3]
 
 clients.each do |client| puts "#{client.nom} - #{client.email} - #{client.type} " end
 
-
+#STRATEGY = Création de commandes après stratégies de réduction différentes
 puts "\n=== CRÉATION DE COMMANDES ==="
 
 puts "\n=== COMMANDE 1 : Pauline ==="
-# Créer client1, commande1, ajouter plats, stratégie, observer, statuts, facture
 commande1 = Commande.new(client1)
 commande1.ajouter_plat(entree2)
 commande1.ajouter_plat(plat3)
@@ -68,10 +67,42 @@ commande1.plats.each do |plat| puts "  - #{plat.nom} : #{plat.prix}€" end
 puts "\nAvant réduction : #{commande1.calculer_total}€"
 
 commande1.reduction_strategy = ReductionEtudiant.new
-puts "Après  réduction étudiante : #{commande1.calculer_total}€"
+puts "Après réduction étudiante : #{commande1.calculer_total}€"
 
 puts "\n=== COMMANDE 2 : Michel ==="
-# Créer client2, commande2, ajouter plats, stratégie, observer, statuts, facture
+commande2 = Commande.new(client2)
+commande2.ajouter_plat(entree4)
+commande2.ajouter_plat(entree2)
+commande2.ajouter_plat(plat2)
+commande2.ajouter_plat(dessert2)
+commande2.ajouter_plat(dessert3)
+commande2.ajouter_plat(dessert4)
+puts "Plats dans la commande de Michel :"
+commande2.plats.each do |plat| puts "  - #{plat.nom} : #{plat.prix}€" end
+
+puts "\nAvant réduction : #{commande2.calculer_total}€"
+commande2.reduction_strategy = ReductionFidelite.new
+puts "Après réduction fidélité : #{commande2.calculer_total}€"
 
 puts "\n=== COMMANDE 3 : Martine ==="
-# Créer client3, commande3, ajouter plats, stratégie, observer, statuts, facture
+commande3 = Commande.new(client3)
+puts "Martine a commandé tout le menu"
+(menu_entrees + menu_plats + menu_desserts).each { |plat| commande3.ajouter_plat(plat) }
+puts "Plats dans la commande de Martine :"
+commande3.plats.each do |plat| puts "  - #{plat.nom} : #{plat.prix}€" end
+puts "\nAvant réduction : #{commande3.calculer_total}€"
+commande3.reduction_strategy=ReductionGroupe.new
+puts "Après réduction groupe : #{commande3.calculer_total}"
+
+# OBSERVER : Notifie automatiquement la cuisine et les clients
+puts "\n=== ENVOYER NOTIFICATION À LA CUISINE ET AU CLIENT QUE LA COMMANDE A ÉTÉ REÇU ==="
+commande1.add_observer(cuisine)
+commande1.add_observer(client1)
+puts "✉️"
+commande1.setStatut("commande reçue")
+puts "🍔"
+commande1.setStatut("commande en cours de préparation")
+puts "🚴🏻"
+commande1.setStatut("commande en cours livraison")
+puts "✅"
+commande1.setStatut("commande livrée")

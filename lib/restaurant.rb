@@ -1,13 +1,25 @@
 # 🍽️ Système de Gestion de Commandes pour un Restaurant
 # Projet POO avec Factory Method, Observer et Strategy patterns
 
+#création du module inteface commandeObsever contrat commun pour différents objets
+module CommandeObserver
+    def on_statut_changed(commande)
+      raise NotImplementedError, "Méthode abstraite, doit être implémentée"
+    end
+end
+
 #1 créer la classc client avec les attributs nom email et type ayant une valeur normal par default 
 class Client
+    include CommandeObserver
     attr_accessor :nom, :email, :type
     def initialize(nom, email, type = "normal")
         @nom = nom
         @email = email
         @type = type
+    end
+    
+    def on_statut_changed(commande)
+        puts "#{@nom} : Ma commande est maintenant #{commande.getStatut}"
     end
 end
 
@@ -115,7 +127,7 @@ class Commande
     end
 
     def add_observer(observer)
-        @observers << observer
+        @observers << observer unless @observers.include?(observer)
     end
 
     def remove_observer(observer)
@@ -147,13 +159,6 @@ class Facture
     #methode affiche qui retourne une string pour le moment
     def afficher
         "Total : #{@total}€"
-    end
-end
-
-#création du module inteface commandeObsever contrat commun pour différents objets
-module CommandeObserver
-    def on_statut_changed(commande)
-      raise NotImplementedError, "Méthode abstraite, doit être implémentée"
     end
 end
 
