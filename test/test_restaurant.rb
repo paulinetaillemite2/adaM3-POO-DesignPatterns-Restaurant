@@ -35,11 +35,11 @@ client = Client.new("Pauline", "pauline@example.com")
 commande = Commande.new(client)
 commande.add_observer(cuisine)
 
-puts "Statut initial : #{commande.getStatut}"
+puts "Statut initial : #{commande.statut}"
 commande.setStatut("en_preparation")
-puts "Statut après changement 1 : #{commande.getStatut}"
+puts "Statut après changement 1 : #{commande.statut}"
 commande.setStatut("livre")
-puts "Statut final : #{commande.getStatut}"
+puts "Statut final : #{commande.statut}"
 
 
 #TEST POUR LES REDUCTIONS
@@ -165,11 +165,11 @@ cuisine2 = Cuisine.new
 commande2.add_observer(cuisine2)
 
 puts "\n== Tester les notifications envoyées à la cuisine (Observer Pattern) =="
-puts "Statut initial : #{commande2.getStatut}"
+puts "Statut initial : #{commande2.statut}"
 commande2.setStatut("en_preparation")
-puts "Statut après changement : #{commande2.getStatut}"
+puts "Statut après changement : #{commande2.statut}"
 commande2.setStatut("livre")
-puts "Statut final : #{commande2.getStatut}"
+puts "Statut final : #{commande2.statut}"
 
 puts "\n== Générer la facture =="
 facture2 = Facture.new(commande2)

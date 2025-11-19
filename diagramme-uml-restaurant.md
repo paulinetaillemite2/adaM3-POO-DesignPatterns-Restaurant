@@ -16,6 +16,7 @@ classDiagram
         +getNom(): string
         +getEmail(): string
         +getType(): string
+        +on_statut_changed(commande: Commande): void
     }
     
     class Commande {
@@ -156,6 +157,7 @@ classDiagram
     %% ============================================
     
     CommandeObserver <|.. Cuisine : implements
+    CommandeObserver <|.. Client : implements
     Commande "1" --> "*" CommandeObserver : notifie
     Commande ..> CommandeObserver : uses
     
@@ -190,6 +192,7 @@ classDiagram
 ### Relations d'Implémentation (Observer)
 
 - **CommandeObserver ← Cuisine** : Cuisine implémente l'interface CommandeObserver
+- **CommandeObserver ← Client** : Client implémente l'interface CommandeObserver
 
 ### Relations d'Implémentation (Strategy)
 
@@ -230,9 +233,12 @@ Commande (Subject)
 
 Cuisine (Observer)
   - on_statut_changed(commande)
+
+Client (Observer)
+  - on_statut_changed(commande)
 ```
 
-**Rôle** : Notifier la cuisine quand le statut d'une commande change.
+**Rôle** : Notifier la cuisine et les clients quand le statut d'une commande change.
 
 ### 3. Strategy Pattern
 ```
@@ -255,7 +261,7 @@ Commande (Context)
 
 1. **Commande** est au centre : elle utilise les 3 patterns
    - Factory : pour créer les plats
-   - Observer : pour notifier la cuisine
+   - Observer : pour notifier la cuisine et les clients
    - Strategy : pour calculer les réductions
 
 2. **Séparation des responsabilités** :
@@ -298,6 +304,7 @@ classDiagram
         +getNom(): string
         +getEmail(): string
         +getType(): string
+        +on_statut_changed(commande: Commande): void
     }
     
     class Commande {
@@ -332,7 +339,7 @@ classDiagram
     
     Client "1" --> "*" Commande : a des commandes
     Commande "1" --> "1" Facture : génère
-    Commande "1" --> "*" Cuisine : notifie
+    Commande "1" --> "*" CommandeObserver : notifie
 ```
 
 **Explication** : Les classes principales du système. `Commande` est au centre et utilise les patterns.
@@ -427,7 +434,12 @@ classDiagram
         +on_statut_changed(commande: Commande): void
     }
     
+    class Client {
+        +on_statut_changed(commande: Commande): void
+    }
+    
     CommandeObserver <|.. Cuisine : implements
+    CommandeObserver <|.. Client : implements
     Commande "1" --> "*" CommandeObserver : notifie
     Commande ..> CommandeObserver : uses
 ```
@@ -435,9 +447,9 @@ classDiagram
 **Explication** :
 - **Subject** : `Commande` (maintient une liste d'observers, notifie lors de changements)
 - **Observer** : `CommandeObserver` (interface)
-- **ConcreteObserver** : `Cuisine` (réagit aux notifications)
+- **ConcreteObservers** : `Cuisine` et `Client` (réagissent aux notifications)
 
-**Flux** : Quand `Commande.setStatut()` est appelé → `notify_observers()` → `Cuisine.on_statut_changed()` est appelé.
+**Flux** : Quand `Commande.setStatut()` est appelé → `notify_observers()` → tous les observateurs (Cuisine et Clients) reçoivent `on_statut_changed()`.
 
 ---
 
@@ -533,7 +545,7 @@ classDiagram
 
 **Explication** : `Commande` est au centre et utilise les 3 patterns :
 - **Factory** : Les plats sont créés via les factories
-- **Observer** : Notifie les observateurs (Cuisine) lors des changements de statut
+- **Observer** : Notifie les observateurs (Cuisine et Clients) lors des changements de statut
 - **Strategy** : Utilise une stratégie de réduction pour calculer le total
 
 ---

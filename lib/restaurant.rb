@@ -1,14 +1,15 @@
 # 🍽️ Système de Gestion de Commandes pour un Restaurant
 # Projet POO avec Factory Method, Observer et Strategy patterns
 
-#création du module inteface commandeObsever contrat commun pour différents objets
+#OBSERVER : création de l'interface/module pour l'observer - méthode abstraite - implémenté dans nos classes Client et Cuisine
 module CommandeObserver
     def on_statut_changed(commande)
       raise NotImplementedError, "Méthode abstraite, doit être implémentée"
     end
 end
 
-#1 créer la classc client avec les attributs nom email et type ayant une valeur normal par default 
+
+# CLASSE client avec attributs (to do  : généré la reduction strategy selon des types prédéfinis?)
 class Client
     include CommandeObserver
     attr_accessor :nom, :email, :type
@@ -17,14 +18,23 @@ class Client
         @email = email
         @type = type
     end
-    
+    #methode abstraite implémentée via observer
     def on_statut_changed(commande)
-        puts "#{@nom} : Ma commande est maintenant #{commande.getStatut}"
+        puts "#{@nom} : Ma commande est maintenant #{commande.statut}"
     end
 end
 
-#2 créer la classe abstraite plat avec pour attributs nom et prix
-#2 bis rendre la classe abstraite en levant une exception si on essaie de l'instancier directement
+#Création de la classe cuisine qui utilise le commande observer pour notifier la cuisine que le status que la commande a changé.
+class Cuisine 
+    include CommandeObserver
+        #methode abstraite implémentée via observer
+    def on_statut_changed (commande)
+        puts "Cuisine : Statut de la commande changé à #{commande.statut}"
+    end
+end 
+
+
+#FACTORY : Classe abstraite Product (Plat) - ne peut pas être instanciée directement, doit être héritée par Entree, PlatPrincipal, Dessert
 
 class Plat 
     attr_accessor :nom, :prix
@@ -39,6 +49,8 @@ class Plat
 end
 
 #creer les concretes products, c'est à dire les classes entree platprincipal et dessert uqi hérite de plat. chaque classe dit avoir son initlize nom et prix qui appelle super nom prix.
+
+#FACTORY : Classes concrètes (products) qui héritent de plat
 
 class Entree < Plat 
     def initialize (nom,prix)
@@ -87,7 +99,8 @@ class DessertFactory < MenuFactory
     end
 end
 
-#3 créer la classe commande 
+# STRATEGY + OBSERVER : 
+#chaque commande a un client, un array de plats, un statut par default une reduction nil par default (la reduction s'applique en suite via la strategy) et des observers qu'on peut ajouter (cuisine et clients)
 
 class Commande
     attr_accessor :client, :plats, :statut, :reduction_strategy, :date, :observers
@@ -104,21 +117,14 @@ class Commande
         @plats << plat
     end
 
-    # mdifier la méthode calculer total pour utiliser la stratégie de reduction
+    # calcul du total et application de stratégie selon reduction
     def calculer_total
-        #stocker le total dans une variable
         total = @plats.sum { |plat| plat.prix }
-        #vérifier si il y a une reduction strategy à appliquer
         if @reduction_strategy != nil
-            #stocker la reduction à appliquer et calculer la reduction en passant par total 
             reduction = @reduction_strategy.calculer_reduction(total)
             total -= reduction
         end
         total
-    end
-
-    def getStatut
-        @statut
     end
 
     def setStatut(statut)
@@ -162,22 +168,14 @@ class Facture
     end
 end
 
-#creation de la classe cuisine qui utilise le commande observer pour notifier la cuisine que le status que la commande a changé.
-class Cuisine 
-    include CommandeObserver
-    def on_statut_changed (commande)
-        puts "Cuisine : Statut de la commande changé à #{commande.getStatut}"
-    end
-end 
-
-#créer le module reductionStrategy avec la methode abstraite calculer reduction (total) qui retourne le montant de la reduction
+# STRATEGY : création de l'interface ReductionStragegy pour définir la reduction appliquer (méthode abstraite donc la méthode doit être implémentée dans les classes qui l'appellent) = CONTRAT PARTAGÉ PAR LES CLASSES DE RÉDUCTIONS
 module ReductionStrategy
     def calculer_reduction(total)
         raise NotImplementedError, "Méthode abstraite, doit être implémentée"
     end
 end
 
-#créer les strategie pour chaque type de réduction qui inclut reduction strategy 
+#STRATEGY : Classes concrêtes qui calcule les réductions en implémentant l'interface reduction strategy
 class PasDeReduction
     include ReductionStrategy
     def calculer_reduction(total)

@@ -94,6 +94,8 @@ puts "\nAvant réduction : #{commande3.calculer_total}€"
 commande3.reduction_strategy=ReductionGroupe.new
 puts "Après réduction groupe : #{commande3.calculer_total}"
 
+puts "#{commande1.statut}"
+
 # OBSERVER : Notifie automatiquement la cuisine et les clients
 puts "\n=== ENVOYER NOTIFICATION À LA CUISINE ET AU CLIENT QUE LA COMMANDE A ÉTÉ REÇU ==="
 commande1.add_observer(cuisine)
