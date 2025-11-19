@@ -32,7 +32,6 @@ classDiagram
         +add_observer(observer: CommandeObserver): void
         +remove_observer(observer: CommandeObserver): void
         +notify_observers(): void
-        +getStatut(): string
         +setStatut(statut: string): void
     }
     
@@ -320,7 +319,6 @@ classDiagram
         +add_observer(observer: CommandeObserver): void
         +remove_observer(observer: CommandeObserver): void
         +notify_observers(): void
-        +getStatut(): string
         +setStatut(statut: string): void
     }
     
