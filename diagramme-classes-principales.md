@@ -47,5 +47,3 @@ classDiagram
     Commande "1" --> "1" Facture : génère
     Commande "1" --> "*" CommandeObserver : notifie
 ```
-
-**Explication** : Les classes principales du système. `Commande` est au centre et utilise les patterns.
